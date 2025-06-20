@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Login Form</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #e0e7ff 0%, #a5b4fc 100%);
+            overflow: hidden;
+        }
+
+        .container {
+            position: relative;
+            width: 400px;
+            padding: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            overflow: visible;
+            z-index: 1;
+        }
+
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&q=80') no-repeat center center/cover;
+            filter: blur(10px);
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        h2 {
+            text-align: center;
+            color: #fff;
+            margin-bottom: 30px;
+            font-size: 28px;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 15px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+            font-size: 16px;
+            color: #fff;
+            outline: none;
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-group input:focus {
+            background: rgba(255, 255, 255, 0.25);
+            border-color: #a5b4fc;
+            box-shadow: 0 0 10px rgba(165, 180, 252, 0.5);
+        }
+
+        .input-group label {
+            position: absolute;
+            top: 50%;
+            left: 15px;
+            transform: translateY(-50%);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 16px;
+            pointer-events: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label {
+            top: -10px;
+            left: 10px;
+            font-size: 12px;
+            color: #a5b4fc;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 0 5px;
+            border-radius: 5px;
+        }
+
+        .login-btn {
+            position: fixed;
+            width: 360px;
+            padding: 12px;
+            background: linear-gradient(135deg, #6366f1 0%, #a5b4fc 100%);
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        }
+
+        .login-btn:hover:not(.static) {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+        }
+
+        .login-btn.static {
+            position: relative;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        .login-btn.static:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(99, 102, 241, 0.6);
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-size: 14px;
+            text-align: center;
+            margin-top: 10px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .error-message.show {
+            opacity: 1;
+        }
+
+        .success-message {
+            color: #4ade80;
+            font-size: 16px;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 20px;
+            opacity: 0;
+            transform: translateY(10px);
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .success-message.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <div class="input-group">
+                <input type="text" id="userId" placeholder=" " required>
+                <label for="userId">User ID</label>
+            </div>
+            <div class="input-group">
+                <input type="password" id="password" placeholder=" " required>
+                <label for="password">Password</label>
+            </div>
+            <button type="button" class="login-btn" id="loginBtn">Login</button>
+            <p class="error-message" id="errorMessage">Please fill in both fields</p>
+            <p class="success-message" id="successMessage">Successfully Logged In!</p>
+        </form>
+    </div>
+
+    <script>
+        const loginBtn = document.getElementById('loginBtn');
+        const userIdInput = document.getElementById('userId');
+        const passwordInput = document.getElementById('password');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+
+        function checkInputs() {
+            const userId = userIdInput.value.trim();
+            const password = passwordInput.value.trim();
+            const isFilled = userId !== '' && password !== '';
+            loginBtn.classList.toggle('static', isFilled);
+            return isFilled;
+        }
+
+        function getRandomPosition() {
+            const btnRect = loginBtn.getBoundingClientRect();
+            const viewportWidth = window.innerWidth;
+            const viewportHeight = window.innerHeight;
+            const margin = 20; // Keep button away from edges
+
+            // Define safe boundaries
+            const minX = margin;
+            const maxX = viewportWidth - btnRect.width - margin;
+            const minY = margin;
+            const maxY = viewportHeight - btnRect.height - margin;
+
+            // Generate a random position
+            const newX = Math.random() * (maxX - minX) + minX;
+            const newY = Math.random() * (maxY - minY) + minY;
+
+            return { x: newX, y: newY };
+        }
+
+        loginBtn.addEventListener('mouseenter', () => {
+            if (!checkInputs()) {
+                const { x, y } = getRandomPosition();
+                loginBtn.style.transform = `translate(${x - loginBtn.getBoundingClientRect().left}px, ${y - loginBtn.getBoundingClientRect().top}px)`;
+                errorMessage.classList.add('show');
+            } else {
+                errorMessage.classList.remove('show');
+            }
+        });
+
+        loginBtn.addEventListener('click', (e) => {
+            if (checkInputs()) {
+                successMessage.classList.add('show');
+                errorMessage.classList.remove('show');
+                // Hide success message after 3 seconds
+                setTimeout(() => {
+                    successMessage.classList.remove('show');
+                }, 3000);
+            } else {
+                e.preventDefault();
+            }
+        });
+
+        userIdInput.addEventListener('input', () => {
+            checkInputs();
+            loginBtn.style.transform = 'none';
+            successMessage.classList.remove('show');
+        });
+
+        passwordInput.addEventListener('input', () => {
+            checkInputs();
+            loginBtn.style.transform = 'none';
+            successMessage.classList.remove('show');
+        });
+
+        // Ensure button stays in viewport on resize
+        window.addEventListener('resize', () => {
+            if (!checkInputs()) {
+                const { x, y } = getRandomPosition();
+                loginBtn.style.transform = `translate(${x - loginBtn.getBoundingClientRect().left}px, ${y - loginBtn.getBoundingClientRect().top}px)`;
+            } else {
+                loginBtn.style.transform = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
